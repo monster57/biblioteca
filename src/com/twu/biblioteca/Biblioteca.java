@@ -4,9 +4,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class Biblioteca {
+    private final Menu menu = new Menu(this);
     List<Books> bookList = new ArrayList<Books>();
     List<Option> options = new ArrayList<Option>();
-
 
     {
         bookList.add(new Books("RAMAYANA", "MAHARISHI VALMIKI" , 1999));
@@ -25,11 +25,7 @@ public class Biblioteca {
     }
 
     public String displayAllBooks() {
-        String allBooks = "";
-        for(Books book:bookList){
-            allBooks += book.toString()+"\n";
-        }
-        return allBooks;
+        return menu.displayAllBooks();
     }
 
     public List<Option> getAllOptions() {
@@ -47,16 +43,10 @@ public class Biblioteca {
     }
 
     public void optionHandler(int option) {
-        switch (option){
-            case 1:
-                System.out.println("List of Books : \n"+displayAllBooks());
-                return;
-            case 2:
-                System.exit(0);
-                return;
-            default:
-                System.out.println("Enter a valid option");
-                return;
-        }
+        menu.optionHandler(option);
+    }
+
+    public List<Books> getBookList() {
+        return bookList;
     }
 }
