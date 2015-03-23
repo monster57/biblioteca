@@ -1,52 +1,51 @@
 package com.twu.biblioteca;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.io.PrintStream;
+import java.util.Scanner;
+
+
 
 public class Biblioteca {
-    private final Menu menu = new Menu(this);
-    List<Books> bookList = new ArrayList<Books>();
-    List<Option> options = new ArrayList<Option>();
 
-    {
-        bookList.add(new Books("RAMAYANA", "MAHARISHI VALMIKI" , 1999));
-        bookList.add(new Books("THE ADVENTURE OF SHERLOCK HOLMES", "SIR ARTHUR CONAN DOYLE", 2000));
-        bookList.add(new Books("WINGS OF FIRE", "A.P.J. ABDUL KALAM", 2001));
-        bookList.add(new Books("FIVE POINT SOMEONE", "CHETAN BHAGAT", 2002));
-        options.add(new Option("List Books"));
-        options.add(new Option("Quit"));
-    }
-    public String getWelcomeMessage() {
-        return "Welcome to Biblioteca";
+    Library library;
+    private final Menu menu;
+    private boolean keepRunning;
+
+    public Biblioteca() {
+        menu = new Menu();
+        library = new Library();
+        menu.addItem(new MenuItem("List Books", new ListBooksCommand(System.out, library)));
+        menu.addItem(new MenuItem("Quit", new QuitCommand()));
+        keepRunning = true;
     }
 
-    public List<Books> giveBookList() {
-        return bookList;
-    }
-
-    public String displayAllBooks() {
-        return menu.displayAllBooks();
-    }
-
-    public List<Option> getAllOptions() {
-        return options;
-    }
-
-    public String displayOptions() {
-        String allOptions = "";
-        int i = 1;
-        for(Option option : options){
-            allOptions += i+". "+option.toString()+"\n";
-            i++;
+    public void run() {
+        printWelcomeMessage(System.out);
+        while(keepRunning) {
+            System.out.println(menu);
+            System.out.println("Enter option number:");
+            Scanner scan = new Scanner(System.in);
+            try {
+                optionHandler(scan.nextInt());
+            }catch(Exception e){
+                System.out.println("OOPS!!! Some unknown error occurred!!\n");
+            }
         }
-        return allOptions;
+    }
+
+    public void printWelcomeMessage(PrintStream printStream) {
+        printStream.println("Welcome to Biblioteca.");
     }
 
     public void optionHandler(int option) {
-        menu.optionHandler(option);
-    }
-
-    public List<Books> getBookList() {
-        return bookList;
+        try {
+            menu.handleOption(option);
+        } catch (QuitBibliotecaException e) {
+            System.out.println(e.getMessage());
+            keepRunning = false;
+        }
+        catch (InvalidOptionException e) {
+            System.out.println(e.getMessage());
+        }
     }
 }

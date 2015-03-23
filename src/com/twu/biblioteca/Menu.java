@@ -1,30 +1,42 @@
 package com.twu.biblioteca;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class Menu {
-    private final Biblioteca biblioteca;
+    List<MenuItem> menuItems;
 
-    public Menu(Biblioteca biblioteca) {
-        this.biblioteca = biblioteca;
+
+    public Menu() {
+        menuItems = new ArrayList<MenuItem>();
     }
 
-    public String displayAllBooks() {
-        String allBooks = "";
-        for (Books book : biblioteca.getBookList()) {
-            allBooks += book.toString() + "\n";
+    @Override
+    public String toString() {
+        StringBuilder menuListing = new StringBuilder();
+        int index = 0;
+
+        for (MenuItem menuItem : menuItems) {
+            ++index;
+
+            menuListing.append(index);
+            menuListing.append(". ");
+            menuListing.append(menuItem.getName());
+            menuListing.append(System.lineSeparator());
         }
-        return allBooks;
+
+        return menuListing.toString();
     }
 
-    public void optionHandler(int option) {
-        switch (option) {
-            case 1:
-                System.out.println("List of Books : \n" + displayAllBooks());
-                return;
-            case 2:
-                System.exit(0);
-                return;
-            default:
-                System.out.println("Enter a valid option");
-        }
+    public void handleOption(int option) throws QuitBibliotecaException, InvalidOptionException {
+        if(option <1 || option > menuItems.size())
+            throw new InvalidOptionException("Invalid Option");
+        menuItems.get(option-1).performAction();
+    }
+
+
+
+    public void addItem(MenuItem menuItem) {
+        menuItems.add(menuItem);
     }
 }
